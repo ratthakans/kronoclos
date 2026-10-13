@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KRONOCLOS · Device preview</title>
+<link rel="icon" href="v2/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:Manrope;src:url('v2/assets/Manrope.ttf') format('truetype');font-weight:200 800}
+:root{--paper:oklch(18% .012 239);--ink:oklch(97% .003 155);--steel:oklch(71% .018 235);--rule:oklch(34% .014 235);--accent:oklch(80% .142 208);--bezel:oklch(12% .01 239);--bezel-edge:oklch(30% .012 239)}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:clip}
+body{background:radial-gradient(ellipse at 50% 0%,oklch(26% .03 220),var(--paper) 60%);background-color:var(--paper);color:var(--ink);font-family:Manrope,system-ui,sans-serif;min-height:100vh;padding:32px clamp(16px,3vw,48px) 48px}
+header{display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between;margin-bottom:32px}
+h1{margin:0;font-size:clamp(24px,3vw,36px);letter-spacing:-.03em}
+p{margin:6px 0 0;color:var(--steel);font-size:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:13px;font-weight:600;color:var(--steel);background:none;border:1px solid var(--rule);border-radius:999px;padding:9px 16px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--bezel)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.stage{display:flex;flex-wrap:wrap;gap:40px 56px;align-items:flex-end;justify-content:center}
+figure{margin:0;display:grid;justify-items:center;gap:14px}
+figcaption{font-size:12px;color:var(--steel);letter-spacing:.06em;text-transform:uppercase}
+.device{position:relative;background:var(--bezel);border:1px solid var(--bezel-edge);box-shadow:0 40px 80px oklch(5% 0 0 / .55)}
+.screen{position:relative;overflow:hidden;background:#171c20}
+.screen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+/* laptop */
+.laptop .device{padding:14px 14px 18px;border-radius:14px 14px 4px 4px}
+.laptop .base{width:calc(100% + 80px);height:14px;margin-top:-1px;background:linear-gradient(var(--bezel-edge),var(--bezel));border-radius:0 0 14px 14px}
+.laptop{justify-items:center}
+/* tablet + phone */
+.tablet .device{padding:18px;border-radius:28px}
+.tablet .screen{border-radius:10px}
+.phone .device{padding:30px 12px;border-radius:44px}
+.phone .screen{border-radius:34px}
+.phone .notch{position:absolute;top:11px;left:50%;translate:-50% 0;width:56px;height:8px;border-radius:4px;background:var(--bezel-edge)}
+.note{text-align:center;margin-top:28px;font-size:12px;color:var(--steel)}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>KRONOCLOS v2 on every screen</h1><p>Live and interactive: scroll and click inside each device.</p></div>
+ <div class="tabs" role="group" aria-label="Page to preview">
+  <button data-src="v2/index.html" aria-pressed="true">Landing page</button>
+  <button data-src="v2/index.html#demo/overview" aria-pressed="false">Demo · Overview</button>
+  <button data-src="v2/index.html#demo/operations" aria-pressed="false">Demo · Operations</button>
+  <button data-src="v2/index.html#demo/impact" aria-pressed="false">Demo · Impact</button>
+ </div>
+</header>
+<main class="stage">
+ <figure class="laptop" data-w="1440" data-h="900" data-scale=".46"><div><div class="device"><div class="screen"><iframe title="Desktop preview, 1440 by 900"></iframe></div></div><div class="base"></div></div><figcaption>Desktop · 1440 × 900</figcaption></figure>
+ <figure class="tablet" data-w="820" data-h="1180" data-scale=".42"><div class="device"><div class="screen"><iframe title="Tablet preview, 820 by 1180"></iframe></div></div><figcaption>Tablet · 820 × 1180</figcaption></figure>
+ <figure class="phone" data-w="390" data-h="844" data-scale=".6"><div class="device"><span class="notch" aria-hidden="true"></span><div class="screen"><iframe title="Phone preview, 390 by 844"></iframe></div></div><figcaption>Phone · 390 × 844</figcaption></figure>
+</main>
+<p class="note">Device outlines are presentation framing only. Every screen shows fictional demo data.</p>
+<script>
+const figs=[...document.querySelectorAll('figure')];
+function fit(){const avail=Math.min(innerWidth-64,1600);figs.forEach(f=>{let s=+f.dataset.scale;const w=+f.dataset.w,h=+f.dataset.h;if(w*s>avail-40)s=(avail-40)/w;const sc=f.querySelector('.screen'),fr=f.querySelector('iframe');sc.style.width=w*s+'px';sc.style.height=h*s+'px';fr.style.width=w+'px';fr.style.height=h+'px';fr.style.transform=`scale(${s})`;});}
+function load(src){figs.forEach(f=>{f.querySelector('iframe').src=src+(src.includes('#')?'':'')});}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed',x===b));load(b.dataset.src);}));
+addEventListener('resize',fit);fit();load('v2/index.html');
+</script>
+</body>
+</html>
